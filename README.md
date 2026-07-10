@@ -13,6 +13,7 @@ Prices Service is a Spring Boot service for querying applicable product prices b
 - Spring Data JPA
 - H2 in-memory database
 - springdoc-openapi for Swagger UI
+- Lombok
 - JUnit 5 and MockMvc for testing
 
 ## Architecture
@@ -36,6 +37,12 @@ Swagger UI is available once the application is running at:
 
 ```text
 /swagger-ui.html
+```
+
+Main endpoint:
+
+```text
+GET /api/v1/prices?applicationDate=2020-06-14T10:00:00&productId=35455&brandId=1
 ```
 
 ## How to Run
@@ -71,4 +78,8 @@ src/main/resources/db/data.sql
 
 ## Implementation Notes
 
-The project uses Java 21 LTS, Spring Boot 3.5.x, and a manually maintained OpenAPI contract.
+The project uses Java 21 LTS, Spring Boot 3.5.x, Lombok, and a manually maintained OpenAPI contract.
+
+Application logs are configured at INFO level for the service package. Hibernate SQL logging is disabled to keep runtime logs focused.
+
+The application is configured to honor forwarded headers, so Swagger UI and generated links work correctly behind HTTPS proxies such as Railway.

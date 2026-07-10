@@ -3,6 +3,7 @@ package com.classora.prices.infrastructure.rest.exception;
 import com.classora.prices.application.exception.PriceNotFoundException;
 import com.classora.prices.infrastructure.rest.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -13,6 +14,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
+@Slf4j
 public class RestExceptionHandler {
 
     @ExceptionHandler(PriceNotFoundException.class)
@@ -20,6 +22,7 @@ public class RestExceptionHandler {
             PriceNotFoundException exception,
             HttpServletRequest request
     ) {
+        log.warn("Returning 404 response for path={}: {}", request.getRequestURI(), exception.getMessage());
         return buildErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }
 
@@ -27,12 +30,18 @@ public class RestExceptionHandler {
             MissingServletRequestParameterException.class,
             MethodArgumentTypeMismatchException.class
     })
-    public ResponseEntity<ErrorResponse> handleBadRequest(HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleBadRequest(Exception exception, HttpServletRequest request) {
+        log.warn(
+                "Returning 400 response for path={}: {}",
+                request.getRequestURI(),
+                exception.getClass().getSimpleName()
+        );
         return buildErrorResponse(HttpStatus.BAD_REQUEST, "Invalid or missing query parameter.", request);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleUnexpectedException(HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception exception, HttpServletRequest request) {
+        log.error("Returning 500 response for path={}", request.getRequestURI(), exception);
         return buildErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "Unexpected internal server error.",

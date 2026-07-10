@@ -17,7 +17,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
 
 springdoc:
   swagger-ui:
@@ -25,3 +25,11 @@ springdoc:
 
 server:
   forward-headers-strategy: framework
+
+logging:
+  level:
+    root: INFO
+    com.classora.prices: INFO
+    com.example.prices: INFO
+    org.hibernate.SQL: WARN
+    org.hibernate.orm.jdbc.bind: WARN

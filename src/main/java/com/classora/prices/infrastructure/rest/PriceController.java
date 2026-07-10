@@ -5,6 +5,7 @@ import com.classora.prices.domain.model.Price;
 import com.classora.prices.infrastructure.rest.dto.ApplicablePriceResponse;
 import com.classora.prices.infrastructure.rest.mapper.ApplicablePriceResponseMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @RequestMapping("/api/v1/prices")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class PriceController {
 
     private final FindApplicablePriceUseCase findApplicablePriceUseCase;
@@ -28,6 +30,12 @@ public class PriceController {
             @RequestParam Long productId,
             @RequestParam Long brandId
     ) {
+        log.info(
+                "Received price request: brandId={}, productId={}, applicationDate={}",
+                brandId,
+                productId,
+                applicationDate
+        );
         Price price = findApplicablePriceUseCase.execute(brandId, productId, applicationDate);
         return ResponseEntity.ok(responseMapper.toResponse(price));
     }
